@@ -1,29 +1,32 @@
-import google.generativeai as genai
+
 import os
+from datetime import datetime
 
-# Gemini API key
-genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 
-# Load model
-model = genai.GenerativeModel("gemini-1.5-flash")
+BASE_DIR = "generated_projects"
 
-def generate_api(user_prompt: str):
 
-    prompt = f"""
-You are an expert backend developer.
+def create_project(project_name: str, code: str):
+    """
+    Create a new FastAPI project from generated AI code
+    """
 
-Generate a FastAPI CRUD API based on this requirement:
+    # unique folder name
+    timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
+    project_folder = f"{project_name}_{timestamp}"
 
-{user_prompt}
+    project_path = os.path.join(BASE_DIR, project_folder)
 
-Rules:
-- Use FastAPI
-- Create routes
-- Create Pydantic models
-- Simple in-memory storage
-- Return only Python code
-"""
+    os.makedirs(project_path, exist_ok=True)
 
-    response = model.generate_content(prompt)
+    # create main.py
+    main_file = os.path.join(project_path, "main.py")
 
-    return response.text
+    with open(main_file, "w") as f:
+        f.write(code)
+
+    return {
+        "project_name": project_folder,
+        "path": project_path,
+        "file": "main.py"
+    }
