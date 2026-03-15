@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AI API Builder</title>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Syne:wght@400;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0e0f11;
+      --surface: #16181c;
+      --border: rgba(255,255,255,0.08);
+      --border-hover: rgba(255,255,255,0.15);
+      --text-primary: #e8eaed;
+      --text-secondary: #888c96;
+      --text-tertiary: #555a63;
+      --green: #1D9E75;
+      --green-light: #E1F5EE;
+      --green-dark: #0F6E56;
+      --red-bg: #2a1a1a;
+      --red-text: #f87171;
+    }
+
+    body {
+      font-family: 'Syne', sans-serif;
+      background: var(--bg);
+      color: var(--text-primary);
+      min-height: 100vh;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 3rem 1.5rem;
+    }
+
+    .app {
+      width: 100%;
+      max-width: 680px;
+    }
+
+    .header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 2.5rem;
+    }
+
+    .logo-dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 0 3px rgba(29,158,117,0.2);
+    }
+
+    .logo-text {
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      color: var(--text-primary);
+    }
+
+    .logo-text span { color: var(--green); }
+
+    .badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      background: var(--surface);
+      border: 0.5px solid var(--border);
+      border-radius: 4px;
+      padding: 2px 7px;
+      color: var(--text-secondary);
+    }
+
+    .prompt-area {
+      border: 0.5px solid var(--border-hover);
+      border-radius: 12px;
+      background: var(--surface);
+      overflow: hidden;
+      margin-bottom: 1rem;
+      transition: border-color 0.2s;
+    }
+
+    .prompt-area:focus-within {
+      border-color: var(--green);
+    }
+
+    .prompt-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--green);
+      padding: 12px 16px 0;
+      letter-spacing: 0.5px;
+    }
+
+    .prompt-input {
+      width: 100%;
+      border: none;
+      outline: none;
+      background: transparent;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 14px;
+      color: var(--text-primary);
+      padding: 8px 16px 16px;
+      resize: none;
+      min-height: 100px;
+      line-height: 1.6;
+    }
+
+    .prompt-input::placeholder { color: var(--text-tertiary); }
+
+    .prompt-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 16px;
+      border-top: 0.5px solid var(--border);
+      background: rgba(255,255,255,0.02);
+    }
+
+    .char-count {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--text-tertiary);
+    }
+
+    .hint {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--text-tertiary);
+    }
+
+    .generate-btn {
+      font-family: 'Syne', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      background: var(--green);
+      color: #fff;
+      border: none;
+      border-radius: 7px;
+      padding: 8px 20px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      transition: opacity 0.15s, transform 0.1s;
+    }
+
+    .generate-btn:hover { opacity: 0.88; }
+    .generate-btn:active { transform: scale(0.97); }
+    .generate-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    .spinner {
+      width: 12px; height: 12px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .examples {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 1.75rem;
+    }
+
+    .example-chip {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      background: var(--surface);
+      border: 0.5px solid var(--border);
+      border-radius: 20px;
+      padding: 5px 12px;
+      cursor: pointer;
+      color: var(--text-secondary);
+      transition: border-color 0.15s, color 0.15s;
+    }
+
+    .example-chip:hover {
+      border-color: var(--green);
+      color: var(--green);
+    }
+
+    .error-msg {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--red-text);
+      padding: 12px 16px;
+      background: var(--red-bg);
+      border: 0.5px solid rgba(248,113,113,0.2);
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      display: none;
+    }
+
+    .error-msg.visible { display: block; }
+
+    .output-panel {
+      border: 0.5px solid var(--border-hover);
+      border-radius: 12px;
+      background: var(--surface);
+      overflow: hidden;
+      display: none;
+      animation: fadeIn 0.25s ease;
+    }
+
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+    .output-panel.visible { display: block; }
+
+    .output-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 16px;
+      border-bottom: 0.5px solid var(--border);
+      background: rgba(255,255,255,0.02);
+    }
+
+    .output-title {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .status-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--green);
+    }
+
+    .model-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      color: var(--green-dark);
+      background: rgba(29,158,117,0.12);
+      border-radius: 4px;
+      padding: 2px 6px;
+    }
+
+    .copy-btn {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      background: transparent;
+      border: 0.5px solid var(--border);
+      border-radius: 4px;
+      padding: 4px 10px;
+      cursor: pointer;
+      color: var(--text-secondary);
+      transition: all 0.15s;
+    }
+
+    .copy-btn:hover {
+      border-color: var(--green);
+      color: var(--green);
+    }
+
+    .output-code {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      line-height: 1.7;
+      padding: 18px;
+      color: var(--text-primary);
+      white-space: pre-wrap;
+      word-break: break-all;
+      max-height: 380px;
+      overflow-y: auto;
+    }
+
+    .output-code::-webkit-scrollbar { width: 4px; }
+    .output-code::-webkit-scrollbar-track { background: transparent; }
+    .output-code::-webkit-scrollbar-thumb { background: var(--border-hover); border-radius: 4px; }
+  </style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <div class="logo-dot"></div>
+    <div class="logo-text">AI <span>API</span> Builder</div>
+    <div class="badge">v1.0</div>
+  </div>
+
+  <div class="prompt-area">
+    <div class="prompt-label">// describe your endpoint</div>
+    <textarea class="prompt-input" id="promptInput" placeholder="create a user registration endpoint with email and password..."></textarea>
+    <div class="prompt-footer">
+      <span class="char-count" id="charCount">0 chars</span>
+      <div style="display:flex;align-items:center;gap:12px;">
+        <span class="hint">ctrl+enter</span>
+        <button class="generate-btn" id="generateBtn" onclick="generateAPI()">
+          <span id="btnText">Generate</span>
+          <span>→</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="examples">
+    <div class="example-chip" onclick="setPrompt('create a user login endpoint with JWT token')">login + JWT</div>
+    <div class="example-chip" onclick="setPrompt('create a todo CRUD endpoint with SQLAlchemy')">todo CRUD</div>
+    <div class="example-chip" onclick="setPrompt('create a file upload endpoint')">file upload</div>
+    <div class="example-chip" onclick="setPrompt('create a product search endpoint with filters')">product search</div>
+    <div class="example-chip" onclick="setPrompt('create a password reset endpoint with email OTP')">password reset</div>
+  </div>
+
+  <div class="error-msg" id="errorMsg"></div>
+
+  <div class="output-panel" id="outputPanel">
+    <div class="output-header">
+      <div class="output-title">
+        <div class="status-dot"></div>
+        generated_endpoint.py
+        <span class="model-tag" id="modelTag">gemini</span>
+      </div>
+      <button class="copy-btn" id="copyBtn" onclick="copyCode()">copy</button>
+    </div>
+    
+    <!-- இதை output-header closing div kku appuram add pannu -->
+    <pre class="output-code" id="outputCode"></pre>
+  </div>
+</div>
+
+<script>
+  const promptInput = document.getElementById('promptInput');
+  const charCount = document.getElementById('charCount');
+  const generateBtn = document.getElementById('generateBtn');
+  const outputPanel = document.getElementById('outputPanel');
+  const outputCode = document.getElementById('outputCode');
+  const errorMsg = document.getElementById('errorMsg');
+  const modelTag = document.getElementById('modelTag');
+  // prompt display
+  
+  document.getElementById('promptText').textContent = data.prompt || prompt;
+
+
+  promptInput.addEventListener('input', () => {
+    charCount.textContent = promptInput.value.length + ' chars';
+  });
+
+  function setPrompt(text) {
+    promptInput.value = text;
+    charCount.textContent = text.length + ' chars';
+    promptInput.focus();
+  }
+
+  function showError(msg) {
+    errorMsg.textContent = msg;
+    errorMsg.classList.add('visible');
+  }
+
+  function hideError() {
+    errorMsg.classList.remove('visible');
+  }
+
+  async function generateAPI() {
+    const prompt = promptInput.value.trim();
+    if (!prompt || prompt.length < 5) {
+      showError('Prompt too short — describe your endpoint clearly.');
+      return;
+    }
+
+    hideError();
+    generateBtn.disabled = true;
+    generateBtn.innerHTML = '<div class="spinner"></div><span>Generating...</span>';
+    outputPanel.classList.remove('visible');
+
+    try {
+      const res = await fetch('http://127.0.0.1:8000/generate-api', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt })
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        showError(data.detail || 'Generation failed. Try again.');
+        return;
+      }
+
+      outputCode.textContent = data.api_code;
+      if (data.model_used) modelTag.textContent = data.model_used;
+      outputPanel.classList.add('visible');
+
+    } catch (err) {
+      showError('Cannot connect to backend. Is FastAPI running on port 8000?');
+    } finally {
+      generateBtn.disabled = false;
+      generateBtn.innerHTML = '<span>Generate</span><span>→</span>';
+    }
+  }
+
+  function copyCode() {
+    navigator.clipboard.writeText(outputCode.textContent).then(() => {
+      const btn = document.getElementById('copyBtn');
+      btn.textContent = 'copied!';
+      setTimeout(() => btn.textContent = 'copy', 1500);
+    });
+  }
+
+  promptInput.addEventListener('keydown', (e) => {
+    if (e.ctrlKey && e.key === 'Enter') generateAPI();
+  });
+</script>
+</body>
+</html>
