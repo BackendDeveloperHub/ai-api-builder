@@ -32,5 +32,5 @@ def root():
 
 # Static files — LAST-ல mount பண்ணு!
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-STATIC_DIR = os.path.join(BASE_DIR, "static")
-app.mount("/", StaticFiles(directory
+STATIC_DIR = os.path.join(BASE_DIR, "app/static")
+app.mount("/", StaticFiles(directory=STATIC_DIR,html=True), name="static")
