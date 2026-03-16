@@ -19,7 +19,7 @@ app.add_middleware(
 )
 
 # Router
-app.include_router(router, prefix="/api")
+app.include_router(router)
 
 # Root endpoint
 @app.get("/api")
