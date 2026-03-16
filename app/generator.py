@@ -2,30 +2,20 @@ import os
 import zipfile
 from pathlib import Path
 
-# Generated projects save பண்ண folder
 OUTPUT_DIR = "generated_projects"
 
 def create_project_structure(api_code: str, project_name: str) -> str:
-    """
-    Generated API code-ஐ
-    downloadable project-ஆ மாத்துது
-    """
-
-    # Project folder create பண்ணு
     project_path = Path(OUTPUT_DIR) / project_name
     project_path.mkdir(parents=True, exist_ok=True)
 
-    # main.py எழுது
     main_file = project_path / "main.py"
     main_file.write_text(api_code)
 
-    # requirements.txt எழுது
     requirements = project_path / "requirements.txt"
     requirements.write_text(
         "fastapi\nuvicorn\npydantic\nsqlalchemy\n"
     )
 
-    # README.md எழுது
     readme = project_path / "README.md"
     readme.write_text(f"""# {project_name}
 
@@ -35,3 +25,10 @@ def create_project_structure(api_code: str, project_name: str) -> str:
 ```bash
 pip install -r requirements.txt
 uvicorn main:app --reload
+""")
+zip_path = Path(OUTPUT_DIR) / f"{project_name}.zip"
+with zipfile.ZipFile(zip_path, "w") as zipf:
+    for file in project_path.rglob("*"):
+        zipf.write(file, file.relative_to(project_path))
+
+return str(zip_path)
