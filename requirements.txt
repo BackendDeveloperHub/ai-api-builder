@@ -1,9 +1,10 @@
 fastapi
 uvicorn
-requests
+httpx
 python-dotenv
 pydantic
 sqlalchemy
+alembic
 jinja2
+python-multipart
 ollama
-httpx
