@@ -315,12 +315,12 @@
     <div class="output-header">
       <div class="output-title">
         <div class="status-dot"></div>
-       
+
         <span class="model-tag" id="modelTag">gemini</span>
       </div>
       <button class="copy-btn" id="copyBtn" onclick="copyCode()">copy</button>
     </div>
-    
+
     <!-- இதை output-header closing div kku appuram add pannu -->
     <pre class="output-code" id="outputCode"></pre>
   </div>
@@ -334,11 +334,6 @@
   const outputCode = document.getElementById('outputCode');
   const errorMsg = document.getElementById('errorMsg');
   const modelTag = document.getElementById('modelTag');
-  // prompt display
-  
-  document.getElementById('promptText').textContent = data.prompt || prompt;
-
-
   promptInput.addEventListener('input', () => {
     charCount.textContent = promptInput.value.length + ' chars';
   });
@@ -371,7 +366,7 @@
     outputPanel.classList.remove('visible');
 
     try {
-      const res = await fetch('https://ai-api-builder.onrender.com/', {
+      const res = await fetch('https://ai-api-builder.onrender.com/api/generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ prompt })
@@ -384,7 +379,7 @@
         return;
       }
 
-      outputCode.textContent = data.api_code;
+      outputCode.textContent = (data.api_code || '').replace(/\\n/g, '\n');
       if (data.model_used) modelTag.textContent = data.model_used;
       outputPanel.classList.add('visible');
 
