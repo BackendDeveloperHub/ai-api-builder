@@ -31,6 +31,22 @@ def root():
         "docs": "/docs"
     }
 
+
+@app.post("/generate-fastapi")
+async def generate_fastapi(request: Request):
+    body = await request.json()
+    description = body.get("description")
+    
+    # Groq call பண்ணி
+    # router, model, schema, crud return பண்ணு
+    
+    return {
+        "router": "...",
+        "model": "...",
+        "schema": "...",
+        "crud": "..."
+    }
+
 # Static files — LAST-ல mount பண்ணு!
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 STATIC_DIR = os.path.join(BASE_DIR, "app/static")
