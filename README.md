@@ -6,7 +6,7 @@ AI API Builder is an intelligent developer tool that converts natural language p
 
 Built under **[BackendDeveloperHub (BDH)](https://github.com/BackendDeveloperHub)** — an open source organization created to help new developers learn backend development through real projects.
 
-🔗 **Live Demo:** https://ai-api-builder.onrender.com
+🔗 **Live Demo:** https://apibuil.fastapicloud.dev/
 
 ---
 
