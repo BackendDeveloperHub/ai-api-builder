@@ -34,6 +34,13 @@ Generate a COMPLETE FastAPI project with ALL of these files:
 - Proper HTTPException error handling
 - Depends(get_db) for database session
 
+
+#===static/index.html==
+
+-all routes link html code 
+-html link css
+-html js code 
+
 IMPORTANT: Separate each file exactly like this:
 # === main.py ===
 <code here>
