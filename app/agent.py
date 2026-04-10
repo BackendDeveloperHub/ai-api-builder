@@ -48,7 +48,7 @@ IMPORTANT: Separate each file exactly like this:
 # === database.py ===
 <code here>
 
-Return ONLY raw Python code. No markdown, no backticks, no explanation."""
+Return ONLY raw Python code and static/html. No markdown, no backticks, no explanation."""
 
 def validate_code(code: str) -> bool:
     required = ["from fastapi", "FastAPI(", "def "]
