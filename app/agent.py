@@ -34,12 +34,10 @@ Generate a COMPLETE FastAPI project with ALL of these files:
 - Proper HTTPException error handling
 - Depends(get_db) for database session
 
+#=== index.html ===
 
-#===static/index.html==
+-All routes  endpoint link html code 
 
--all routes link html code 
--html link css
--html js code 
 
 IMPORTANT: Separate each file exactly like this:
 # === main.py ===
@@ -48,7 +46,7 @@ IMPORTANT: Separate each file exactly like this:
 # === database.py ===
 <code here>
 
-Return ONLY raw Python code and static/html. No markdown, no backticks, no explanation."""
+Return ONLY raw Python code and No markdown, no backticks, no explanation."""
 
 def validate_code(code: str) -> bool:
     required = ["from fastapi", "FastAPI(", "def "]
